@@ -1,0 +1,1435 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Future Trend Tracker (Local) v2 • Pro UI</title>
+
+    <style>
+        :root {
+            /* Core */
+            --bg0: #070a12;
+            --bg1: #0b1020;
+            --card: rgba(17, 24, 39, 0.78);
+            --card2: rgba(12, 18, 33, 0.62);
+            --border: rgba(148, 163, 184, 0.16);
+            --border2: rgba(99, 102, 241, 0.20);
+            --text: #eaf0ff;
+            --muted: rgba(226, 232, 240, 0.70);
+            --muted2: rgba(226, 232, 240, 0.55);
+
+            /* Accent */
+            --acc: #7aa2ff;
+            --acc2: #a78bfa;
+            --good: #4ade80;
+            --bad: #fb7185;
+
+            /* Layout */
+            --r: 18px;
+            --shadow: 0 18px 55px rgba(0, 0, 0, 0.42);
+            --shadow2: 0 10px 30px rgba(0, 0, 0, 0.30);
+
+            /* Sizing */
+            --pad: clamp(14px, 2vw, 22px);
+            --gap: clamp(12px, 1.6vw, 18px);
+            --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font);
+            color: var(--text);
+            background:
+                radial-gradient(1200px 700px at 20% 0%, rgba(122, 162, 255, 0.14), transparent 55%),
+                radial-gradient(1000px 650px at 85% 10%, rgba(167, 139, 250, 0.12), transparent 55%),
+                radial-gradient(800px 500px at 55% 100%, rgba(74, 222, 128, 0.06), transparent 60%),
+                linear-gradient(180deg, var(--bg1), var(--bg0));
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* App shell */
+        .app {
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+
+        /* Top bar */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(12px);
+            background: rgba(7, 10, 18, 0.55);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .topbar-inner {
+            width: 100%;
+            padding: 16px var(--pad);
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            min-width: 220px;
+        }
+
+        .logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background:
+                radial-gradient(circle at 30% 30%, rgba(122, 162, 255, 0.95), rgba(122, 162, 255, 0.18)),
+                radial-gradient(circle at 75% 75%, rgba(167, 139, 250, 0.75), rgba(167, 139, 250, 0.10));
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(122, 162, 255, 0.25);
+        }
+
+        .brand h1 {
+            font-size: 14px;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            line-height: 1.1;
+        }
+
+        .brand .sub {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            color: var(--muted);
+            background: rgba(15, 23, 42, 0.35);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 99px;
+            background: rgba(74, 222, 128, 0.85);
+            box-shadow: 0 0 0 5px rgba(74, 222, 128, 0.10);
+        }
+
+        /* Content */
+        .content {
+            width: 100%;
+            padding: var(--pad);
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: var(--gap);
+            align-items: start;
+        }
+
+        @media (max-width: 980px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .brand {
+                min-width: 0;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            box-shadow: var(--shadow2);
+            overflow: hidden;
+        }
+
+        .card .card-head {
+            padding: 14px 14px 12px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .card .card-head h2 {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            color: rgba(234, 240, 255, 0.94);
+        }
+
+        .card .card-body {
+            padding: 14px;
+        }
+
+        .hint {
+            color: var(--muted2);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        /* Forms */
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            background: rgba(2, 6, 23, 0.55);
+            color: var(--text);
+            outline: none;
+            transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: rgba(122, 162, 255, 0.55);
+            box-shadow: 0 0 0 6px rgba(122, 162, 255, 0.12);
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid3 {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        @media (max-width: 680px) {
+
+            .grid,
+            .grid3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Buttons */
+        .btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        button {
+            cursor: pointer;
+            border: 1px solid rgba(122, 162, 255, 0.24);
+            background: rgba(122, 162, 255, 0.14);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 0.2px;
+            transition: transform .12s ease, background .12s ease, border-color .12s ease;
+            user-select: none;
+        }
+
+        button:hover {
+            background: rgba(122, 162, 255, 0.22);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0px);
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.good {
+            border-color: rgba(74, 222, 128, 0.30);
+            background: rgba(74, 222, 128, 0.12);
+        }
+
+        button.good:hover {
+            background: rgba(74, 222, 128, 0.18);
+        }
+
+        button.danger {
+            border-color: rgba(251, 113, 133, 0.34);
+            background: rgba(251, 113, 133, 0.12);
+        }
+
+        button.danger:hover {
+            background: rgba(251, 113, 133, 0.18);
+        }
+
+        .iconbtn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* KPI area */
+        .kpis {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-top: 12px;
+        }
+
+        @media (max-width: 980px) {
+            .kpis {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .kpi {
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: var(--card2);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.20);
+        }
+
+        .kpi .t {
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kpi .t .spark {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(122, 162, 255, 0.85);
+            box-shadow: 0 0 0 5px rgba(122, 162, 255, 0.10);
+        }
+
+        .kpi .v {
+            font-size: 18px;
+            font-weight: 900;
+            margin-top: 8px;
+            letter-spacing: 0.2px;
+        }
+
+        /* Chart */
+        .chart-wrap {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(2, 6, 23, 0.40);
+        }
+
+        canvas {
+            width: 100%;
+            height: 340px;
+            background: rgba(2, 6, 23, 0.45);
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            display: block;
+        }
+
+        /* Records table */
+        .table-card {
+            grid-column: 1 / -1;
+        }
+
+        .table-wrap {
+            max-height: min(52vh, 520px);
+            overflow: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            background: rgba(2, 6, 23, 0.22);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+            padding: 10px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: rgba(12, 18, 33, 0.92);
+            backdrop-filter: blur(10px);
+            color: rgba(234, 240, 255, 0.92);
+            font-weight: 900;
+            letter-spacing: 0.2px;
+        }
+
+        tbody tr:hover td {
+            background: rgba(122, 162, 255, 0.06);
+        }
+
+        .mini {
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        /* Tiny helper text areas */
+        .notes-stack {
+            display: grid;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .note {
+            color: var(--muted2);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        /* Make it feel "app-like" */
+        .card,
+        input,
+        select,
+        textarea,
+        button,
+        canvas {
+            will-change: transform;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="brand">
+                    <div class="logo"></div>
+                    <div>
+                        <h1>Sure Success CRM</h1>
+                        <div class="sub">Local-only • Auto-saves to <span class="pill"
+                                style="padding:2px 8px">localStorage</span></div>
+                    </div>
+                </div>
+
+                <div class="top-actions">
+                    <div class="pill"><span class="dot"></span> Running locally</div>
+                    <div class="pill">Trend: Conversions / Spend / Cost-Per-Conv</div>
+                    <div class="pill">Forecast: Linear</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <!-- LEFT: Form -->
+            <section class="card">
+                <div class="card-head">
+                    <h2>1) Add / Update Record</h2>
+                    <div class="pill" style="border-color:rgba(122,162,255,0.22); color:rgba(234,240,255,0.72)">Fast
+                        data entry</div>
+                </div>
+                <div class="card-body">
+                    <div class="grid">
+                        <div><label>Date</label><input id="date" type="date" /></div>
+                        <div><label>Campaign</label><input id="campaign" placeholder="e.g., Get more calls" /></div>
+                    </div>
+
+                    <div class="grid3" style="margin-top:12px">
+                        <div><label>Status</label>
+                            <select id="status">
+                                <option value="">(blank)</option>
+                                <option>Current</option>
+                                <option>Processing</option>
+                                <option>Future</option>
+                                <option>Paused</option>
+                                <option>Stopped</option>
+                            </select>
+                        </div>
+                        <div><label>Clicks</label><input id="clicks" type="number" min="0" step="1" /></div>
+                        <div><label>CPC (₹)</label><input id="cpc" type="number" min="0" step="0.01" /></div>
+                    </div>
+
+                    <div class="grid3" style="margin-top:12px">
+                        <div><label>Spend total (₹)</label><input id="spend" type="number" min="0" step="0.01" /></div>
+                        <div><label>Calls</label><input id="calls" type="number" min="0" step="1" /></div>
+                        <div><label>Conversions</label><input id="conversions" type="number" min="0" step="1" /></div>
+                    </div>
+
+                    <div class="grid" style="margin-top:12px">
+                        <div><label>Hold / Lost</label><input id="holdLost" type="number" min="0" step="1" /></div>
+                        <div><label>Next steps</label>
+                            <select id="nextSteps">
+                                <option value="">(blank)</option>
+                                <option>Continue</option>
+                                <option>Optimize</option>
+                                <option>Pause</option>
+                                <option>Stop</option>
+                                <option>Scale</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:12px">
+                        <label>Note</label>
+                        <textarea id="note" placeholder="What happened? Why? What will you change next?"></textarea>
+                    </div>
+
+                    <div class="btns">
+                        <button class="good iconbtn" id="addBtn">➕ Add record</button>
+                        <button id="updateBtn" disabled class="iconbtn">✅ Update selected</button>
+                        <button class="danger iconbtn" id="clearBtn">🧹 Clear form</button>
+                    </div>
+
+                    <div class="hint" style="margin-top:10px">
+                        Forecast rule: simple linear trend (fast + transparent).
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT: KPIs + Chart -->
+            <aside class="card">
+                <div class="card-head">
+                    <h2>2) KPIs • Trend • Forecast</h2>
+                    <div class="pill">Dashboard</div>
+                </div>
+                <div class="card-body">
+                    <div class="grid">
+                        <div>
+                            <label>Trend metric</label>
+                            <select id="metric">
+                                <option value="conversions">Conversions (default)</option>
+                                <option value="spend">Spend</option>
+                                <option value="cpa">Cost/Conversion</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Forecast steps</label>
+                            <select id="steps">
+                                <option>3</option>
+                                <option selected>6</option>
+                                <option>9</option>
+                                <option>12</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="kpis">
+                        <div class="kpi">
+                            <div class="t"><span class="spark"></span>Spend</div>
+                            <div class="v" id="kpiSpend">₹0</div>
+                        </div>
+                        <div class="kpi">
+                            <div class="t"><span class="spark"></span>Clicks</div>
+                            <div class="v" id="kpiClicks">0</div>
+                        </div>
+                        <div class="kpi">
+                            <div class="t"><span class="spark"></span>Conversions</div>
+                            <div class="v" id="kpiConv">0</div>
+                        </div>
+                        <div class="kpi">
+                            <div class="t"><span class="spark"></span>Cost/conv (Latest)</div>
+                            <div class="v" id="kpiCpa">₹0</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-wrap">
+                        <canvas id="chart" width="900" height="360"></canvas>
+
+                        <div class="notes-stack">
+                            <div class="note" id="chartNote">Actual line + forecast.</div>
+                            <div class="note" id="trendNote"></div>
+                            <div class="note" id="cpcNote"></div>
+                            <div class="note" id="importNote"></div>
+                        </div>
+                    </div>
+
+                    <div class="btns" style="margin-top:12px">
+                        <button id="exportJson" class="iconbtn">⬇️ Export JSON</button>
+                        <button id="exportCsv" class="iconbtn">⬇️ Export CSV</button>
+                        <button id="importJson" class="iconbtn">⬆️ Import JSON</button>
+                        <button id="importXlsx" class="iconbtn">📄 Import Excel</button>
+                        <button class="danger iconbtn" id="wipeAll">🗑️ Wipe all data</button>
+                    </div>
+
+                    <input id="filePicker" type="file" accept="application/json" style="display:none" />
+                    <input id="excelPicker" type="file" accept=".xlsx,.xls" style="display:none" />
+                </div>
+            </aside>
+
+            <!-- TABLE -->
+            <section class="card table-card">
+                <div class="card-head">
+                    <h2>3) Records</h2>
+                    <div class="pill">Sticky header • Scrollable</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <table id="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Campaign</th>
+                                    <th>Status</th>
+                                    <th>Clicks</th>
+                                    <th>Spend</th>
+                                    <th>Conv</th>
+                                    <th>Calls</th>
+                                    <th>Cost/Conv</th>
+                                    <th>Hold/Lost</th>
+                                    <th>Next</th>
+                                    <th>Note</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="hint" style="margin-top:10px">Excel import is automatic: header + columns are
+                        auto-detected.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Excel reader (SheetJS) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <script>
+        const KEY = "futureTrendTracker.v2";
+        const $ = id => document.getElementById(id);
+        const fmtINR = n => "₹" + Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+        const fmtNum = n => Number(n || 0).toLocaleString("en-IN");
+
+        function roundTo(n, decimals = 2) {
+            const p = 10 ** decimals;
+            return Math.round((Number(n) + Number.EPSILON) * p) / p;
+        }
+
+        /* Normalize numeric fields so imports don't keep strings */
+        function normalizeRow(r) {
+            return {
+                ...r,
+                clicks: Number(r.clicks || 0),
+                cpc: Number(r.cpc || 0),
+                spend: Number(r.spend || 0),
+                calls: Number(r.calls || 0),
+                conversions: Number(r.conversions || 0),
+                holdLost: Number(r.holdLost || 0),
+            };
+        }
+
+        function loadData() {
+            try {
+                const rows = JSON.parse(localStorage.getItem(KEY) || "[]");
+                return Array.isArray(rows) ? rows.map(normalizeRow) : [];
+            } catch {
+                return [];
+            }
+        }
+        function saveData(rows) { localStorage.setItem(KEY, JSON.stringify(rows)); }
+
+        function toRowFromForm() {
+            return normalizeRow({
+                id: crypto.randomUUID(),
+                date: $("date").value || "",
+                campaign: $("campaign").value.trim(),
+                status: $("status").value,
+                clicks: $("clicks").value,
+                cpc: $("cpc").value,
+                spend: $("spend").value,
+                calls: $("calls").value,
+                conversions: $("conversions").value,
+                holdLost: $("holdLost").value,
+                nextSteps: $("nextSteps").value,
+                note: $("note").value.trim()
+            });
+        }
+        function fillForm(r) {
+            $("date").value = r.date || "";
+            $("campaign").value = r.campaign || "";
+            $("status").value = r.status || "";
+            $("clicks").value = r.clicks ?? 0;
+            $("cpc").value = r.cpc ?? 0;
+            $("spend").value = r.spend ?? 0;
+            $("calls").value = r.calls ?? 0;
+            $("conversions").value = r.conversions ?? 0;
+            $("holdLost").value = r.holdLost ?? 0;
+            $("nextSteps").value = r.nextSteps || "";
+            $("note").value = r.note || "";
+        }
+        let selectedId = null;
+        function clearForm() { fillForm({}); selectedId = null; $("updateBtn").disabled = true; }
+
+        /* CPA = spend / conversions (rounded) */
+        function costPerConv(r) {
+            const conv = Number(r.conversions || 0);
+            const spend = Number(r.spend || 0);
+            return conv > 0 ? roundTo(spend / conv, 2) : null;
+        }
+
+        function metricValue(r, metric) {
+            if (metric === "conversions") return Number(r.conversions || 0);
+            if (metric === "spend") return Number(r.spend || 0);
+            if (metric === "cpa") {
+                const v = costPerConv(r);
+                return (v === null) ? 0 : v;
+            }
+            return 0;
+        }
+        function metricLabel(metric) {
+            if (metric === "conversions") return "Conversions";
+            if (metric === "spend") return "Spend (₹)";
+            if (metric === "cpa") return "Cost/Conversion (₹)";
+            return "Metric";
+        }
+
+        /* KPI:
+           - Spend/Clicks/Conversions = TOTAL
+           - Cost/conv KPI = ONLY LATEST RECORD spend / conversions
+        */
+        function updateKPIs(rows) {
+            const spend = rows.reduce((s, r) => s + Number(r.spend || 0), 0);
+            const clicks = rows.reduce((s, r) => s + Number(r.clicks || 0), 0);
+            const conv = rows.reduce((s, r) => s + Number(r.conversions || 0), 0);
+
+            const latest = [...rows].sort((a, b) => (a.date || "").localeCompare(b.date || "")).at(-1);
+            const latestCpa = latest ? (costPerConv(latest) ?? 0) : 0;
+
+            $("kpiSpend").textContent = fmtINR(spend);
+            $("kpiClicks").textContent = fmtNum(clicks);
+            $("kpiConv").textContent = fmtNum(conv);
+            $("kpiCpa").textContent = fmtINR(latestCpa);
+        }
+
+        function linearForecast(y, steps) {
+            const n = y.length;
+            if (n < 2) return Array.from({ length: steps }, () => (y[n - 1] || 0));
+            let sumT = 0, sumY = 0, sumTT = 0, sumTY = 0;
+            for (let i = 0; i < n; i++) {
+                const t = i + 1, yi = y[i];
+                sumT += t; sumY += yi; sumTT += t * t; sumTY += t * yi;
+            }
+            const denom = (n * sumTT - sumT * sumT) || 1e-9;
+            const b = (n * sumTY - sumT * sumY) / denom;
+            const a = (sumY - b * sumT) / n;
+            return Array.from({ length: steps }, (_, k) => (a + b * (n + k + 1)));
+        }
+
+        /* Month helpers */
+        function monthKey(dateStr) {
+            if (!dateStr || dateStr.length < 7) return "";
+            return dateStr.slice(0, 7);
+        }
+        function monthLabel(mk) {
+            if (!mk || mk.length !== 7) return mk;
+            const y = mk.slice(0, 4);
+            const m = mk.slice(5, 7);
+            const names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const idx = Math.max(0, Math.min(11, Number(m) - 1));
+            return `${names[idx]} ${y}`;
+        }
+        function aggregateMonthly(rows) {
+            const map = new Map();
+            for (const r of rows) {
+                const mk = monthKey(r.date || "");
+                if (!mk) continue;
+                if (!map.has(mk)) {
+                    map.set(mk, { month: mk, spend: 0, clicks: 0, calls: 0, conversions: 0, holdLost: 0 });
+                }
+                const a = map.get(mk);
+                a.spend += Number(r.spend || 0);
+                a.clicks += Number(r.clicks || 0);
+                a.calls += Number(r.calls || 0);
+                a.conversions += Number(r.conversions || 0);
+                a.holdLost += Number(r.holdLost || 0);
+            }
+            const out = [...map.values()].sort((a, b) => a.month.localeCompare(b.month));
+            return out.map(m => ({
+                id: "m-" + m.month,
+                date: m.month + "-01",
+                campaign: "Monthly total",
+                status: "",
+                clicks: m.clicks,
+                spend: m.spend,
+                calls: m.calls,
+                conversions: m.conversions,
+                holdLost: m.holdLost,
+                cpc: m.clicks ? (m.spend / m.clicks) : 0,
+                nextSteps: "",
+                note: ""
+            }));
+        }
+        function sign(x) {
+            if (!isFinite(x) || x === 0) return 0;
+            return x > 0 ? 1 : -1;
+        }
+        function computeMonthStreaks(monthRows, metric) {
+            const vals = monthRows.map(r => metricValue(r, metric));
+            if (vals.length < 2) return { streaks: [] };
+
+            let streaks = [];
+            let cur = null;
+
+            for (let i = 1; i < vals.length; i++) {
+                const d = vals[i] - vals[i - 1];
+                const s = sign(d);
+                const type = s > 0 ? "up" : (s < 0 ? "down" : "flat");
+
+                if (type === "flat") {
+                    if (cur) { streaks.push(cur); cur = null; }
+                    continue;
+                }
+                if (!cur) {
+                    cur = { type, start: i - 1, end: i, months: 2 };
+                } else if (cur.type === type) {
+                    cur.end = i;
+                    cur.months += 1;
+                } else {
+                    streaks.push(cur);
+                    cur = { type, start: i - 1, end: i, months: 2 };
+                }
+            }
+            if (cur) streaks.push(cur);
+
+            streaks = streaks.filter(s => s.months >= 2);
+            return { streaks };
+        }
+
+        /* CPC fluctuation detector (note only) */
+        function computeCpcSeries(rowsSorted) {
+            return rowsSorted.map(r => {
+                const clicks = Number(r.clicks || 0);
+                const spend = Number(r.spend || 0);
+                if (clicks > 0) return spend / clicks;
+                return Number(r.cpc || 0);
+            });
+        }
+        function analyzeCpcFluctuations(rowsSorted) {
+            const dates = rowsSorted.map(r => r.date || "");
+            const y = computeCpcSeries(rowsSorted);
+            if (y.length < 3) return { note: "CPC: need at least 3 data points to detect fluctuations." };
+
+            const diff = (i) => y[i] - y[i - 1];
+            let biggest = null;
+
+            for (let i = 1; i < y.length; i++) {
+                const jump = Math.abs(diff(i));
+                if (!biggest || jump > biggest.jump) {
+                    biggest = { from: dates[i - 1], to: dates[i], d: diff(i), jump };
+                }
+            }
+
+            let note = `CPC biggest jump: ${(biggest.d >= 0 ? "+" : "")}${biggest.d.toFixed(2)} (${biggest.from}→${biggest.to})`;
+            return { note };
+        }
+
+        function drawChart(rows) {
+            const metric = $("metric").value;
+            const steps = Number($("steps").value || 6);
+            const canvas = $("chart"), ctx = canvas.getContext("2d");
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            const sorted = [...rows].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+            const labels = sorted.map(r => r.date || "");
+            const y = sorted.map(r => metricValue(r, metric));
+            const forecast = linearForecast(y, steps);
+            const yAll = y.concat(forecast);
+
+            const padL = 56, padR = 18, padT = 18, padB = 34;
+            const maxY = Math.max(1, ...yAll);
+            const minY = Math.min(0, ...yAll);
+            const xCount = Math.max(2, yAll.length);
+            const xStep = (w - padL - padR) / (xCount - 1);
+            const yScale = (h - padT - padB) / (maxY - minY || 1);
+
+            const monthRows = aggregateMonthly(sorted);
+            const { streaks } = computeMonthStreaks(monthRows, metric);
+
+            const monthToRange = new Map();
+            for (let i = 0; i < labels.length; i++) {
+                const mk = monthKey(labels[i]);
+                if (!mk) continue;
+                if (!monthToRange.has(mk)) monthToRange.set(mk, { startIdx: i, endIdx: i });
+                else monthToRange.get(mk).endIdx = i;
+            }
+
+            function xAtIdx(i) { return padL + i * xStep; }
+            function yAtVal(v) { return padT + (maxY - v) * yScale; }
+            const xy = (i, yi) => [padL + i * xStep, yAtVal(yi)];
+
+            for (const s of streaks) {
+                const mkStart = monthKey(monthRows[s.start].date);
+                const mkEnd = monthKey(monthRows[s.end].date);
+                const r1 = monthToRange.get(mkStart);
+                const r2 = monthToRange.get(mkEnd);
+                if (!r1 || !r2) continue;
+
+                const x1 = xAtIdx(r1.startIdx);
+                const x2 = xAtIdx(r2.endIdx);
+
+                ctx.fillStyle = (s.type === "up") ? "rgba(74,222,128,0.10)" : "rgba(251,113,133,0.10)";
+                ctx.fillRect(x1, padT, (x2 - x1), (h - padB - padT));
+
+                ctx.fillStyle = (s.type === "up") ? "rgba(74,222,128,0.85)" : "rgba(251,113,133,0.85)";
+                ctx.font = "12px system-ui";
+                ctx.fillText((s.type === "up" ? "↑" : "↓") + s.months + "m", x1 + 6, padT + 14);
+            }
+
+            ctx.strokeStyle = "rgba(148,163,184,0.16)";
+            ctx.lineWidth = 1;
+            const gridN = 5;
+            for (let i = 0; i <= gridN; i++) {
+                const gy = padT + (h - padT - padB) * (i / gridN);
+                ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(w - padR, gy); ctx.stroke();
+                const val = (maxY - (maxY - minY) * (i / gridN));
+                ctx.fillStyle = "rgba(226,232,240,0.65)";
+                ctx.font = "12px system-ui";
+                ctx.fillText(val.toFixed(0), 12, gy + 4);
+            }
+            ctx.strokeStyle = "rgba(148,163,184,0.22)";
+            ctx.beginPath(); ctx.moveTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+
+            ctx.strokeStyle = "rgba(122,162,255,0.95)";
+            ctx.lineWidth = 2.2;
+            ctx.beginPath();
+            for (let i = 0; i < y.length; i++) {
+                const [x1, y1] = xy(i, y[i]);
+                if (i === 0) ctx.moveTo(x1, y1); else ctx.lineTo(x1, y1);
+            }
+            ctx.stroke();
+
+            ctx.fillStyle = "rgba(122,162,255,0.95)";
+            for (let i = 0; i < y.length; i++) {
+                const [x1, y1] = xy(i, y[i]);
+                ctx.beginPath(); ctx.arc(x1, y1, 3, 0, Math.PI * 2); ctx.fill();
+            }
+
+            ctx.strokeStyle = "rgba(122,162,255,0.35)";
+            ctx.setLineDash([6, 5]); ctx.lineWidth = 2;
+            if (y.length) {
+                const [xs, ys] = xy(y.length - 1, y[y.length - 1] || 0);
+                ctx.beginPath(); ctx.moveTo(xs, ys);
+                for (let k = 0; k < forecast.length; k++) {
+                    const [x1, y1] = xy(y.length + k, forecast[k]);
+                    ctx.lineTo(x1, y1);
+                }
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = "rgba(226,232,240,0.65)";
+            ctx.font = "11px system-ui";
+            const every = Math.ceil(xCount / 6);
+            for (let i = 0; i < labels.length; i += every) {
+                const x = padL + i * xStep;
+                ctx.fillText(labels[i], x - 18, h - 10);
+            }
+            ctx.fillText("…forecast", w - 90, h - 10);
+
+            $("chartNote").textContent = metricLabel(metric) + ": actual line + " + steps + "-step linear forecast.";
+
+            if (streaks.length) {
+                const bestUp = [...streaks].filter(s => s.type === "up").sort((a, b) => b.months - a.months)[0];
+                const bestDown = [...streaks].filter(s => s.type === "down").sort((a, b) => b.months - a.months)[0];
+
+                const parts = [];
+                if (bestUp) {
+                    const sMk = monthKey(monthRows[bestUp.start].date);
+                    const eMk = monthKey(monthRows[bestUp.end].date);
+                    parts.push(`Longest increase: ↑${bestUp.months} month(s) (${monthLabel(sMk)} → ${monthLabel(eMk)})`);
+                }
+                if (bestDown) {
+                    const sMk = monthKey(monthRows[bestDown.start].date);
+                    const eMk = monthKey(monthRows[bestDown.end].date);
+                    parts.push(`Longest drop: ↓${bestDown.months} month(s) (${monthLabel(sMk)} → ${monthLabel(eMk)})`);
+                }
+                $("trendNote").textContent = parts.join(" | ");
+            } else {
+                $("trendNote").textContent = "Trend highlight: not enough month-to-month movement (or too few months) to compute streaks.";
+            }
+
+            const cpcInfo = analyzeCpcFluctuations(sorted);
+            $("cpcNote").textContent = cpcInfo.note;
+        }
+
+        function download(name, content, mime) {
+            const blob = new Blob([content], { type: mime });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+        }
+        function toCSV(rows) {
+            const cols = ["date", "campaign", "status", "clicks", "cpc", "spend", "calls", "conversions", "holdLost", "nextSteps", "note"];
+            const esc = s => ('"' + String(s ?? "").replaceAll('"', '""') + '"');
+            return [cols.join(","), ...rows.map(r => cols.map(c => esc(r[c])).join(","))].join("\n");
+        }
+
+        function render() {
+            const rows = loadData().sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+            const tb = $("tbl").querySelector("tbody");
+            tb.innerHTML = "";
+
+            for (const r of rows) {
+                const cpa = costPerConv(r);
+                const tr = document.createElement("tr");
+                const cells = [
+                    r.date, r.campaign, r.status,
+                    fmtNum(r.clicks), fmtINR(r.spend), fmtNum(r.conversions), fmtNum(r.calls),
+                    (cpa === null ? "—" : fmtINR(cpa)),
+                    fmtNum(r.holdLost), r.nextSteps, r.note
+                ];
+                for (const c of cells) { const td = document.createElement("td"); td.textContent = c ?? ""; tr.appendChild(td); }
+
+                const tdA = document.createElement("td");
+                const edit = document.createElement("button"); edit.textContent = "Edit"; edit.className = "mini";
+                edit.onclick = () => { selectedId = r.id; fillForm(r); $("updateBtn").disabled = false; window.scrollTo({ top: 0, behavior: "smooth" }); };
+                const del = document.createElement("button"); del.textContent = "Delete"; del.className = "mini danger";
+                del.onclick = () => { saveData(rows.filter(x => x.id !== r.id)); if (selectedId === r.id) clearForm(); render(); };
+                tdA.appendChild(edit); tdA.appendChild(del);
+                tr.appendChild(tdA);
+                tb.appendChild(tr);
+            }
+
+            updateKPIs(rows);
+            drawChart(rows);
+        }
+
+        /* =========================
+           Auto Excel import (NO selection)
+           ========================= */
+        function norm(s) { return String(s ?? "").trim().toLowerCase(); }
+
+        function toISODate(v) {
+            if (v == null || v === "") return "";
+            if (v instanceof Date && !isNaN(v)) return v.toISOString().slice(0, 10);
+
+            if (typeof v === "number" && isFinite(v)) {
+                const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+                if (!isNaN(d)) return d.toISOString().slice(0, 10);
+            }
+
+            const s = String(v).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+            const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+            if (m) {
+                const dd = String(m[1]).padStart(2, "0");
+                const mm = String(m[2]).padStart(2, "0");
+                const yyyy = m[3];
+                return `${yyyy}-${mm}-${dd}`;
+            }
+
+            const d = new Date(s);
+            if (!isNaN(d)) return d.toISOString().slice(0, 10);
+            return "";
+        }
+        function asNum(v) {
+            const n = Number(String(v ?? "").toString().replace(/[,₹\s]/g, ""));
+            return isFinite(n) ? n : 0;
+        }
+
+        function pickSheetName(wb) {
+            const names = wb.SheetNames || [];
+            const lower = names.map(n => n.toLowerCase());
+            const idx = lower.indexOf("data");
+            return idx >= 0 ? names[idx] : names[0];
+        }
+
+        function detectHeaderRow(aoa) {
+            const need = [
+                { re: /\bdate\b/, w: 5 },
+                { re: /\bcampaign\b/, w: 5 },
+                { re: /\bspend\b|\bamount\s*spent\b|\bcost\b(?!\s*per)/, w: 3 },
+                { re: /\bclicks?\b/, w: 3 },
+                { re: /\bconversions?\b|\bleads?\b|\benquir/, w: 3 },
+                { re: /\bcalls?\b/, w: 2 },
+                { re: /\bhold\b|\blost\b/, w: 2 },
+                { re: /\bstatus\b/, w: 1 },
+                { re: /\bnote\b|\bremark\b|\bcomment/, w: 1 },
+                { re: /\bnext\s*steps?\b|\bnext\b/, w: 1 },
+            ];
+
+            let best = { row: -1, score: -1 };
+            const limit = Math.min(30, aoa.length);
+            for (let r = 0; r < limit; r++) {
+                const row = aoa[r] || [];
+                const cells = row.map(x => norm(x)).filter(Boolean);
+                if (!cells.length) continue;
+
+                let score = 0;
+                for (const k of need) {
+                    if (cells.some(c => k.re.test(c))) score += k.w;
+                }
+                if (cells.length <= 2) score -= 1;
+
+                if (score > best.score) {
+                    best = { row: r, score };
+                }
+            }
+            if (best.score < 8) return -1;
+            return best.row;
+        }
+
+        function buildAutoMap(headers) {
+            const H = headers.map(h => ({ raw: h, n: norm(h) }));
+            const find = (...res) => {
+                for (const re of res) {
+                    const hit = H.find(x => re.test(x.n));
+                    if (hit) return hit.raw;
+                }
+                return "";
+            };
+            return {
+                date: find(/\bdate\b/),
+                campaign: find(/\bcampaign\b/, /\bname\b/),
+                status: find(/\bstatus\b/, /\bstate\b/),
+                clicks: find(/\bclicks?\b/),
+                cpc: find(/\bcpc\b/, /\bcost\s*per\s*click\b/),
+                spend: find(/\bspend\b/, /\bamount\s*spent\b/, /\bcost\b(?!\s*per)/),
+                calls: find(/\bcalls?\b/),
+                conversions: find(/\bconversions?\b/, /\bleads?\b/, /\benquir/, /\binquir/),
+                holdLost: find(/\bhold\b.*\blost\b/, /\bhold\b/, /\blost\b/),
+                nextSteps: find(/\bnext\s*steps?\b/, /\bnext\b/),
+                note: find(/\bnote\b/, /\bremark\b/, /\bcomment/),
+            };
+        }
+
+        function recordsFromSheetAOA(aoa) {
+            const headerRow = detectHeaderRow(aoa);
+            if (headerRow < 0) throw new Error("Could not auto-detect header row. Ensure your sheet contains columns like Date and Campaign.");
+
+            const headers = (aoa[headerRow] || []).map(h => String(h ?? "").trim());
+            const map = buildAutoMap(headers);
+
+            if (!map.date || !map.campaign) {
+                throw new Error("Auto-mapping failed: Date and Campaign columns were not found.");
+            }
+
+            const out = [];
+            for (let i = headerRow + 1; i < aoa.length; i++) {
+                const row = aoa[i] || [];
+                if (row.every(v => String(v ?? "").trim() === "")) continue;
+
+                const obj = {};
+                for (let c = 0; c < headers.length; c++) {
+                    obj[headers[c]] = row[c];
+                }
+
+                const date = toISODate(obj[map.date]);
+                const campaign = String(obj[map.campaign] ?? "").trim();
+                if (!date || !campaign) continue;
+
+                const clicks = map.clicks ? asNum(obj[map.clicks]) : 0;
+                const spend = map.spend ? asNum(obj[map.spend]) : 0;
+                const cpc = map.cpc ? asNum(obj[map.cpc]) : (clicks ? spend / clicks : 0);
+
+                out.push(normalizeRow({
+                    id: crypto.randomUUID(),
+                    date,
+                    campaign,
+                    status: map.status ? String(obj[map.status] ?? "").trim() : "",
+                    clicks,
+                    cpc,
+                    spend,
+                    calls: map.calls ? asNum(obj[map.calls]) : 0,
+                    conversions: map.conversions ? asNum(obj[map.conversions]) : 0,
+                    holdLost: map.holdLost ? asNum(obj[map.holdLost]) : 0,
+                    nextSteps: map.nextSteps ? String(obj[map.nextSteps] ?? "").trim() : "",
+                    note: map.note ? String(obj[map.note] ?? "").trim() : ""
+                }));
+            }
+            return out;
+        }
+
+        /* =========================
+           UI actions
+           ========================= */
+        $("addBtn").onclick = () => {
+            const r = toRowFromForm();
+            if (!r.date || !r.campaign) { alert("Please provide at least Date and Campaign."); return; }
+            const rows = loadData(); rows.push(r); saveData(rows); clearForm(); render();
+        };
+        $("updateBtn").onclick = () => {
+            if (!selectedId) return;
+            const rows = loadData();
+            const idx = rows.findIndex(r => r.id === selectedId);
+            if (idx === -1) return;
+            const u = toRowFromForm(); u.id = selectedId;
+            rows[idx] = u; saveData(rows); clearForm(); render();
+        };
+        $("clearBtn").onclick = clearForm;
+
+        $("wipeAll").onclick = () => {
+            if (confirm("This will delete ALL saved data on this browser for this app. Continue?")) {
+                localStorage.removeItem(KEY);
+                clearForm();
+                $("importNote").textContent = "";
+                $("trendNote").textContent = "";
+                $("cpcNote").textContent = "";
+                render();
+            }
+        };
+
+        $("exportJson").onclick = () => download("future_trend_data_v2.json", JSON.stringify(loadData(), null, 2), "application/json");
+        $("exportCsv").onclick = () => download("future_trend_data_v2.csv", toCSV(loadData()), "text/csv");
+
+        /* JSON import */
+        $("importJson").onclick = () => $("filePicker").click();
+        $("filePicker").addEventListener("change", async e => {
+            const file = e.target.files?.[0]; if (!file) return;
+            const text = await file.text();
+            try {
+                const rows = JSON.parse(text);
+                if (!Array.isArray(rows)) throw new Error("Not an array");
+                for (const r of rows) { if (!r.id) r.id = crypto.randomUUID(); }
+                saveData(rows.map(normalizeRow)); clearForm(); render();
+                $("importNote").textContent = `Imported JSON: ${rows.length} rows`;
+            } catch (err) { alert("Import failed: " + err.message); }
+            e.target.value = "";
+        });
+
+        /* Excel import (AUTO: no selection) */
+        $("importXlsx").onclick = () => $("excelPicker").click();
+        $("excelPicker").addEventListener("change", async e => {
+            const file = e.target.files?.[0]; if (!file) return;
+
+            try {
+                const buf = await file.arrayBuffer();
+                const wb = XLSX.read(buf, { type: "array", cellDates: true });
+                const sheetName = pickSheetName(wb);
+                const ws = wb.Sheets[sheetName];
+
+                const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+                if (!aoa.length) throw new Error("Sheet is empty.");
+
+                const imported = recordsFromSheetAOA(aoa);
+                if (!imported.length) throw new Error("No valid rows found after auto-import. Ensure Date + Campaign exist and have values.");
+
+                const existing = loadData();
+                saveData(existing.concat(imported));
+                clearForm();
+                render();
+
+                $("importNote").textContent = `Imported Excel: "${file.name}" → sheet "${sheetName}" → ${imported.length} rows`;
+            } catch (err) {
+                alert("Excel import failed: " + (err?.message || err));
+            }
+
+            e.target.value = "";
+        });
+
+        $("metric").addEventListener("change", render);
+        $("steps").addEventListener("change", render);
+
+        /***************************************
+ * AUTO SYNC FROM GOOGLE SHEET (CSV)
+ ***************************************/
+
+// Your published CSV URL (NOT pubhtml)
+const SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdiZ2uIAu-6hTsGC0MKtw7SBnuou2VKnmYHrRGu8MS6Nv6FCXzorAKv-4xeubGCA/pub?output=csv";
+
+// Choose sync mode:
+// "replace" = dashboard becomes exactly like sheet (true sync)
+// "merge"   = keep existing local rows + upsert incoming rows by (date+campaign)
+const AUTO_SYNC_MODE = "replace";
+
+// Sync interval in ms (e.g. 60000 = 1 minute)
+const AUTO_SYNC_EVERY_MS = 60000;
+
+// --- CSV parser (handles quotes and commas safely) ---
+function parseCSV(text) {
+  const rows = [];
+  let cur = [];
+  let field = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+
+    // escaped quote ""
+    if (ch === '"' && inQuotes && next === '"') {
+      field += '"';
+      i++;
+      continue;
+    }
+    // toggle quotes
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    // delimiter
+    if (!inQuotes && ch === ",") {
+      cur.push(field);
+      field = "";
+      continue;
+    }
+
+    // newline
+    if (!inQuotes && (ch === "\n" || ch === "\r")) {
+      // handle \r\n
+      if (ch === "\r" && next === "\n") i++;
+      cur.push(field);
+      rows.push(cur);
+      cur = [];
+      field = "";
+      continue;
+    }
+
+    field += ch;
+  }
+
+  // last row
+  if (field.length || cur.length) {
+    cur.push(field);
+    rows.push(cur);
+  }
+
+  return rows;
+}
+
+// Upsert by date + campaign (stable key)
+function upsertByDateCampaign(existing, incoming) {
+  const key = (r) => `${r.date}__${String(r.campaign || "").trim().toLowerCase()}`;
+  const map = new Map(existing.map((r) => [key(r), r]));
+
+  for (const r of incoming) {
+    const k = key(r);
+    if (map.has(k)) {
+      const old = map.get(k);
+      // keep existing id
+      map.set(k, { ...old, ...r, id: old.id });
+    } else {
+      map.set(k, r);
+    }
+  }
+  return [...map.values()];
+}
+
+async function syncFromGoogleSheet() {
+  try {
+    // cache-bust so it doesn't reuse old CSV
+    const url = SHEET_CSV_URL + (SHEET_CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
+
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+
+    const csvText = await res.text();
+    const aoa = parseCSV(csvText);
+
+    // Reuse your existing auto-detection pipeline:
+    const imported = recordsFromSheetAOA(aoa);
+
+    if (!imported.length) {
+      $("importNote").textContent = `Auto-sync: no valid rows found (${new Date().toLocaleString()})`;
+      return;
+    }
+
+    if (AUTO_SYNC_MODE === "replace") {
+      // Make dashboard exactly match sheet
+      saveData(imported.map(normalizeRow));
+    } else {
+      // Merge: keep local + upsert incoming by (date+campaign)
+      const existing = loadData();
+      const merged = upsertByDateCampaign(existing, imported);
+      saveData(merged.map(normalizeRow));
+    }
+
+    clearForm();
+    render();
+
+    $("importNote").textContent =
+      `✅ Auto-synced (${AUTO_SYNC_MODE}): ${imported.length} rows • ${new Date().toLocaleString()}`;
+  } catch (err) {
+    $("importNote").textContent =
+      "❌ Auto-sync failed: " + (err?.message || err);
+  }
+}
+
+let _autoSyncTimer = null;
+
+function startAutoSync() {
+  if (_autoSyncTimer) clearInterval(_autoSyncTimer);
+  syncFromGoogleSheet(); // run once immediately
+  _autoSyncTimer = setInterval(syncFromGoogleSheet, AUTO_SYNC_EVERY_MS);
+}
+
+// Optional: stop auto-sync if needed
+function stopAutoSync() {
+  if (_autoSyncTimer) clearInterval(_autoSyncTimer);
+  _autoSyncTimer = null;
+  $("importNote").textContent = "Auto-sync stopped.";
+}
+
+       (function init() {
+  $("date").value = new Date().toISOString().slice(0, 10);
+  render();
+  startAutoSync(); // ✅ starts auto-sync
+})();
+        
+    </script>
+</body>
+
+</html>
